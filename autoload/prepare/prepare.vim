@@ -1,6 +1,4 @@
 " ==============================================================
-" Author: chxuan <787280310@qq.com>
-" Repository: https://github.com/chxuan/prepare_code
 " Create Date: 2018-05-29
 " License: MIT
 " ==============================================================
@@ -13,49 +11,74 @@ endfunction
 
 " 根据后缀名生成代码
 function! s:gen_prepare_code_by_suffix(suffix)
+	let startNum = <sid>gen_notes(a:suffix)
     if a:suffix == "sh"
-        call <sid>gen_bash_code()
+        call <sid>gen_bash_code(startNum)
     elseif a:suffix == "py"
-        call <sid>gen_python_code()
+        call <sid>gen_python_code(startNum)
     elseif a:suffix == "c"
-        call <sid>gen_c_code()
+        call <sid>gen_c_code(startNum)
     elseif a:suffix == "h" || a:suffix == "hpp"
-        call <sid>gen_cpp_header_code()
+        call <sid>gen_cpp_header_code(startNum)
     elseif a:suffix == "cpp" || a:suffix == "cc"
-        call <sid>gen_cpp_implement_code()
+        call <sid>gen_cpp_implement_code(startNum)
     endif
 endfunction
 
 " 生成bash代码
-function! s:gen_bash_code()
+function! s:gen_bash_code(startNum)
     let lines = <sid>get_prepare_code("sh")
-    call prepare#util#write_texts(lines)
+    call prepare#util#write_texts(a:startNum,lines)
 endfunction
 
 " 生成python代码
-function! s:gen_python_code()
+function! s:gen_python_code(startNum)
     let lines = <sid>get_prepare_code("py")
-    call prepare#util#write_texts(lines)
+ 	call prepare#util#write_texts(a:startNum,lines)
 endfunction
 
 " 生成c代码
-function! s:gen_c_code()
+function! s:gen_c_code(startNum)
     let lines = <sid>get_prepare_code("c")
-    call prepare#util#write_texts(lines)
+ 	call prepare#util#write_texts(a:startNum,lines)
 endfunction
 
 " 生成cpp头文件代码
-function! s:gen_cpp_header_code()
+function! s:gen_cpp_header_code(startNum)
     let lines = <sid>get_prepare_code("h")
     let target = prepare#util#get_current_file_base_name()
     let texts = prepare#util#replace_texts(lines, "snippet", target)
-    call prepare#util#write_texts(texts)
+ 	call prepare#util#write_texts(a:startNum,texts)
 endfunction
 
 " 生成cpp实现代码
-function! s:gen_cpp_implement_code()
+function! s:gen_cpp_implement_code(startNum)
     let lines = <sid>get_prepare_code("cpp")
-    call prepare#util#write_texts(lines)
+ 	call prepare#util#write_texts(a:startNum,lines)
+endfunction
+
+
+"生成注释
+function! s:gen_notes(suffix)
+    if a:suffix == "sh" ||a:suffix == "py"
+		call setline(1, "\#########################################################################")
+    	call append(line(".")  , "\# File Name     : ".expand("%")) 
+    	call append(line(".")+1, "\# Author        : ZhenLiu") 
+    	call append(line(".")+2, "\# mail          : m18223255496@163.com") 
+    	call append(line(".")+3, "\# Created Time  : ".strftime("%c"))
+    	call append(line(".")+4, "\#########################################################################") 
+    	call append(line(".")+5, "")
+		return 6
+    elseif a:suffix == "c" || a:suffix == "h" || a:suffix == "hpp" ||a:suffix == "cpp" || a:suffix == "cc"
+    	call setline(1, "/*************************************************************************")
+    	call append(line("."), "    > File Name       : ".expand("%"))
+    	call append(line(".")+1, "    > Author          : ZhenLiu")
+    	call append(line(".")+2, "    > Mail            : m18223255496@163.com")
+    	call append(line(".")+3, "    > Created Time    : ".strftime("%c"))
+    	call append(line(".")+4, " ************************************************************************/")
+    	call append(line(".")+5, "")
+		return 6
+    endif
 endfunction
 
 " 获取代码片段

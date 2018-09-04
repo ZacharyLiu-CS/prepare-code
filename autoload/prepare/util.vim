@@ -1,6 +1,4 @@
 " ==============================================================
-" Author: chxuan <787280310@qq.com>
-" Repository: https://github.com/chxuan/prepare_code
 " Create Date: 2018-05-29
 " License: MIT
 " ==============================================================
@@ -12,14 +10,15 @@ function! prepare#util#get_current_file_base_name()
 endfunction
 
 " 在当前行写入文本
-function! prepare#util#write_text_at_current_row(text)
-    execute "normal i" . a:text
+function! prepare#util#write_text_at_current_row(i,text)
+    call append(line(".") +a:i,a:text)
 endfunction
 
 " 写文本列表
-function! prepare#util#write_texts(lines)
+function! prepare#util#write_texts(lineNumber,lines)
+  "  call prepare#util#add_notes()
     for i in range(0, len(a:lines) - 1)
-        call prepare#util#write_text_at_current_row(a:lines[i] . "\n")
+        call prepare#util#write_text_at_current_row(a:lineNumber+i,a:lines[i] )
     endfor
 endfunction
 
@@ -46,7 +45,6 @@ function! prepare#util#replace_texts(lines, src, target)
         let ret = prepare#util#replace_string(a:lines[i], a:src, a:target)
         call add(texts, ret)
     endfor
-
     return texts
 endfunction
 
