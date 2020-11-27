@@ -3,87 +3,67 @@
 " License: MIT
 " ==============================================================
 
-" 生成预定于代码
+" generate the prepare code
 function! prepare#prepare#gen_prepare_code()
-    let suffix = prepare#util#get_current_file_suffix()
-    call <sid>gen_prepare_code_by_suffix(suffix)
+  let suffix = prepare#util#get_current_file_suffix()
+  call <sid>gen_prepare_code_by_suffix(suffix)
 endfunction
 
-" 根据后缀名生成代码
+" recognize the file suffix
 function! s:gen_prepare_code_by_suffix(suffix)
-	let startNum = <sid>gen_notes(a:suffix)
-    if a:suffix == "sh"
-        call <sid>gen_bash_code(startNum)
-    elseif a:suffix == "py"
-        call <sid>gen_python_code(startNum)
-    elseif a:suffix == "c"
-        call <sid>gen_c_code(startNum)
-    elseif a:suffix == "h" || a:suffix == "hpp"
-        call <sid>gen_cpp_header_code(startNum)
-    elseif a:suffix == "cpp" || a:suffix == "cc"
-        call <sid>gen_cpp_implement_code(startNum)
-    endif
-endfunction
-
-" 生成bash代码
-function! s:gen_bash_code(startNum)
-    let lines = <sid>get_prepare_code("sh")
-    call prepare#util#write_texts(a:startNum,lines)
-endfunction
-
-" 生成python代码
-function! s:gen_python_code(startNum)
-    let lines = <sid>get_prepare_code("py")
- 	call prepare#util#write_texts(a:startNum,lines)
-endfunction
-
-" 生成c代码
-function! s:gen_c_code(startNum)
-    let lines = <sid>get_prepare_code("c")
- 	call prepare#util#write_texts(a:startNum,lines)
-endfunction
-
-" 生成cpp头文件代码
-function! s:gen_cpp_header_code(startNum)
-    let lines = <sid>get_prepare_code("h")
+  "we only support the code whose suffix is in our snippet respository
+  let file_list = <sid>get_snippet_code_suffix()
+  "To DO Optimization : search an unsorted list is time consuming
+  if index(file_list,a:suffix) != -1
+    " get the name
+    let name=g:prepare_code_name
+    " get the email
+    let email=g:prepare_code_email_address
+    let startNum = <sid>gen_notes(a:suffix,name,email)
+    " get the code
+    let lines = <sid>get_prepare_code(a:suffix)
+    " replace the key word
     let target = prepare#util#get_current_file_base_name()
-    let texts = prepare#util#replace_texts(lines, "snippet", target)
- 	call prepare#util#write_texts(a:startNum,texts)
-endfunction
-
-" 生成cpp实现代码
-function! s:gen_cpp_implement_code(startNum)
-    let lines = <sid>get_prepare_code("cpp")
- 	call prepare#util#write_texts(a:startNum,lines)
+    let lines = prepare#util#replace_texts(lines, "snippet", target)
+    call prepare#util#write_texts(startNum,lines)
+  endif
 endfunction
 
 
-"生成注释
-function! s:gen_notes(suffix)
-    if a:suffix == "sh" ||a:suffix == "py"
-		call setline(1, "\#########################################################################")
-    	call append(line(".")  , "\# File Name     : ".expand("%")) 
-    	call append(line(".")+1, "\# Author        : ZhenLiu") 
-    	call append(line(".")+2, "\# mail          : m18223255496@163.com") 
-    	call append(line(".")+3, "\# Created Time  : ".strftime("%c"))
-    	call append(line(".")+4, "\#########################################################################") 
-    	call append(line(".")+5, "")
-		return 6
-    elseif a:suffix == "c" || a:suffix == "h" || a:suffix == "hpp" ||a:suffix == "cpp" || a:suffix == "cc"
-    	call setline(1, "/*************************************************************************")
-    	call append(line("."), "    > File Name       : ".expand("%"))
-    	call append(line(".")+1, "    > Author          : ZhenLiu")
-    	call append(line(".")+2, "    > Mail            : m18223255496@163.com")
-    	call append(line(".")+3, "    > Created Time    : ".strftime("%c"))
-    	call append(line(".")+4, " ************************************************************************/")
-    	call append(line(".")+5, "")
-		return 6
-    endif
+" generate nodes
+function! s:gen_notes(suffix, name, mail)
+  if a:suffix == "sh" ||a:suffix == "py"
+    call setline(1, "\#########################################################################")
+    call append(line(".")  , "\# File Name     : ".expand("%"))
+    call append(line(".")+1, "\# Author        : ".a:name)
+    call append(line(".")+2, "\# mail          : ".a:mail)
+    call append(line(".")+3, "\# Created Time  : ".strftime("%c"))
+    call append(line(".")+4, "\#########################################################################")
+    call append(line(".")+5, "")
+    return 6
+  elseif a:suffix == "c" || a:suffix == "h" || a:suffix == "hpp" ||a:suffix == "cpp" || a:suffix == "cc"
+    call setline(1, "/*************************************************************************")
+    call append(line("."), "    > File Name       : ".expand("%"))
+    call append(line(".")+1, "    > Author          : ".a:name)
+    call append(line(".")+2, "    > Mail            : ".a:mail)
+    call append(line(".")+3, "    > Created Time    : ".strftime("%c"))
+    call append(line(".")+4, " ************************************************************************/")
+    call append(line(".")+5, "")
+    return 6
+  endif
 endfunction
 
-" 获取代码片段
+" get the code snippets
 function! s:get_prepare_code(suffix)
-    let file_path = g:prepare_code_plugin_path . "/snippet/snippet." . a:suffix
-    return prepare#util#read_file(file_path)
+  let file_path = $HOME."/.vim/plugged/prepare-code/snippet/snippet." . a:suffix
+  return prepare#util#read_file(file_path)
+endfunction
+
+" get all the code suffix in snippets directory
+function! s:get_snippet_code_suffix()
+  let snippet_path = $HOME."/.vim/plugged/prepare-code/snippet"
+  let file_list = split(globpath(snippet_path,'*'),'\n')
+  let file_list = map(copy(file_list),"split(v:val,'\\.')[-1]")
+  return file_list
 endfunction
 
