@@ -1,6 +1,8 @@
 prepare-code: A generate prepare code plugin for vim
 ===============================================
 
+![prepare-code.gif](https://i.loli.net/2020/11/27/pVgqMdxRbmhOcST.gif)
+
 ## Installation
 
 - `vim-plug`
