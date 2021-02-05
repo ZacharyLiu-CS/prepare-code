@@ -32,24 +32,26 @@ endfunction
 
 " generate nodes
 function! s:gen_notes(suffix, name, mail)
-  if a:suffix == "sh" ||a:suffix == "py"
-    call setline(1, "\#########################################################################")
-    call append(line(".")  , "\# File Name     : ".expand("%"))
-    call append(line(".")+1, "\# Author        : ".a:name)
-    call append(line(".")+2, "\# mail          : ".a:mail)
-    call append(line(".")+3, "\# Created Time  : ".strftime("%d/%m/%Y"))
-    call append(line(".")+4, "\#########################################################################")
-    call append(line(".")+5, "")
-    return 6
+  if a:suffix == "sh" || a:suffix =="py"
+    call setline(1, "#")
+    call append(line("."),"#  ".expand("%"))
+    call append(line(".")+1, "#  PROJECT NAME")
+    call append(line(".")+2,"#")
+    call append(line(".")+3, "#  Created by ".a:name." on ".strftime("%d/%m/%Y").".")
+    call append(line(".")+4, "#  Copyright (c) ".strftime("%Y")." ".a:name." <".a:mail.">.")
+    call append(line(".")+5, "#")
+    call append(line(".")+6, "")
+    return 7
   elseif a:suffix == "c" || a:suffix == "h" || a:suffix == "hpp" ||a:suffix == "cpp" || a:suffix == "cc"
-    call setline(1, "/*************************************************************************")
-    call append(line("."), "    > File Name       : ".expand("%"))
-    call append(line(".")+1, "    > Author          : ".a:name)
-    call append(line(".")+2, "    > Mail            : ".a:mail)
-    call append(line(".")+3, "    > Created Time    : ".strftime("%d/%m/%Y"))
-    call append(line(".")+4, " ************************************************************************/")
-    call append(line(".")+5, "")
-    return 6
+    call setline(1, "//")
+    call append(line("."), "//  ".expand("%"))
+    call append(line(".")+1, "//  PROJECT NAME")
+    call append(line(".")+2,"//")
+    call append(line(".")+3, "//  Created by ".a:name." on ".strftime("%d/%m/%Y").".")
+    call append(line(".")+4, "//  Copyright (c) ".strftime("%Y")." ".a:name." <".a:mail.">.")
+    call append(line(".")+5, "//")
+    call append(line(".")+6, "")
+    return 7
   endif
 endfunction
 
