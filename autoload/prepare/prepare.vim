@@ -19,6 +19,7 @@ function! s:gen_prepare_code_by_suffix(suffix)
     let name=g:prepare_code_name
     " get the email
     let email=g:prepare_code_email_address
+
     let startNum = <sid>gen_notes(a:suffix,name,email)
     " get the code
     let lines = <sid>get_prepare_code(a:suffix)
@@ -32,7 +33,7 @@ endfunction
 
 " generate nodes
 function! s:gen_notes(suffix, name, mail)
-  if a:suffix == "sh" || a:suffix =="py"
+  if a:suffix == "sh" || a:suffix =="py" || a:suffix =="pl"
     call setline(1, "#")
     call append(line("."),"#  ".expand("%"))
     call append(line(".")+1, "#  PROJECT NAME")

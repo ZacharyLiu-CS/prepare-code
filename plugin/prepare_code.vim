@@ -11,4 +11,4 @@ endif
 
 let g:prepare_code = 1
 
-autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py execute ":call prepare#prepare#gen_prepare_code()" 
+autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py,*.pl execute ":call prepare#prepare#gen_prepare_code()" 
